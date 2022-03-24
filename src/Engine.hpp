@@ -17,6 +17,10 @@ class Engine{
 
     bool isRunning();
 
+    void grid();
+
+    void line();
+
     static SDL_Renderer* renderer;
     static int xMouse;
     static int yMouse;
@@ -36,11 +40,14 @@ class Engine{
     static bool reader;
 
     //Get dimension of the window
-    int getWidth();
+    static int getWidth();
     int getHeight();
 
     private:
+        int readingLine = 0;
         bool running;
-        SDL_Window* window; 
+        SDL_Window* window;
+        bool grided;
+        // 10 seconde de bufferSize
+        int bufferSize = 10;
 };
-

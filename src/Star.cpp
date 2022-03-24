@@ -8,6 +8,7 @@ Star::Star(int x, int y, int size)
     m_x = x;
     m_y = y;
     m_size = size;
+
 }
 
 Star::~Star(){
@@ -35,7 +36,16 @@ void Star::free(){
 
 void Star::draw(){
     SDL_SetRenderDrawColor(Engine::renderer, m_red, m_green, m_blue, 255);    
-    SDL_RenderDrawPoint(Engine::renderer, m_x, m_y);
+    
+    // if(m_size > 1){
+    //     starRect.x = m_x;
+    //     starRect.y = m_y;
+    //     starRect.w = 5;
+    //     starRect.y = 5;
+    //     SDL_RenderDrawRect(Engine::renderer, &starRect);
+    // }else{
+        SDL_RenderDrawPoint(Engine::renderer, m_x, m_y);
+    // }
 }
 
 void Star::state(){

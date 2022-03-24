@@ -13,7 +13,6 @@ int main(int argc, char **args){
     Uint32 frameStart;
     int frameTime;
 
-
     engine = new Engine();
     engine->init("Stellaria", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     while(engine->isRunning()){

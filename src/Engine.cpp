@@ -3,7 +3,6 @@
 #include "Constellation.hpp"
 #include "Texture.hpp"
 #include "TimeCalc.hpp"
-#include <SDL2/SDL_ttf.h>
 
 //Declare reachable Variable of Engine;
 SDL_Renderer* Engine::renderer = nullptr;
@@ -17,27 +16,6 @@ int Engine::mTempWidth;
 int Engine::mTempHeight;
 SDL_Event Engine::e;
 
-Constellation *andr, *ant, *apus, *ara, *ari, *aql, *aqr, *aur;
-Constellation *boo;
-Constellation *cae, *cam, *cap, *car, *cas, *cen, *cep, *cet, *cha;
-Constellation *cir, *cma, *cmi, *cnc, *col, *com, *cra, *crb, *crt, *cru, *crv, *cvn, *cyg;
-Constellation *delp, *dor, *dra;
-Constellation *equ, *eri;
-Constellation *forn;
-Constellation *gem, *gru;
-Constellation *her, *hor, *hya, *hyi;
-Constellation *ind;
-Constellation *lac, *leo, *lep, *lib, *lmi, *lup, *lyn, *lyr;
-Constellation *men, *mic, *mon, *mus;
-Constellation *nor;
-Constellation *oct, *oph, *ori;
-Constellation *pav, *peg, *per, *phe, *pic, *psa, *psc, *pup, *pyx;
-Constellation *ret;
-Constellation *scl, *sco, *sct, *ser, *sex, *sge, *sgr;
-Constellation *tau, *tel, *tra, *tri, *tuc;
-Constellation *uma, *umi;
-Constellation *vel, *vir, *vol, *vul; 
-
 //Declare Texture
 Texture stellariaText;
 Texture dateTexture;
@@ -46,7 +24,72 @@ Texture mousePosition;
 Texture playTexture;
 Texture sideralTimeTexture;
 
-Engine::Engine(){}
+const int numberOfConstellation = 59;
+
+Constellation *arrayConstellation[numberOfConstellation] = {
+    new Constellation(5, "datas/andDatas.star", "andromeda"),
+    new Constellation(4, "datas/antDatas.star", "antlia"),
+    new Constellation(4, "datas/apsDatas.star", "apus"),
+    new Constellation(11, "datas/aqlDatas.star", "aquilae"),
+    new Constellation(8, "datas/aqrDatas.star", "aquarius"),
+    new Constellation(8, "datas/araDatas.star", "ara"),
+    new Constellation(4, "datas/ariDatas.star", "aries"),
+    new Constellation(7, "datas/aurDatas.star", "auriga"),
+    new Constellation(8, "datas/booDatas.star", "bootes"),
+    new Constellation(4, "datas/caeDatas.star", "caelum"),
+    new Constellation(5, "datas/camDatas.star", "camelopardalis"),
+    new Constellation(9, "datas/capDatas.star", "capricornus"),
+    new Constellation(8, "datas/carDatas.star", "carina"),
+    new Constellation(5, "datas/casDatas.star", "cassiopea"),
+    new Constellation(16, "datas/cen.star", "centauri"),
+    new Constellation(10, "datas/cep.star", "cepheus"),
+    new Constellation(12, "datas/cet.star", "cetus"),
+    new Constellation(5, "datas/cha.star", "chamaeleon"),
+    new Constellation(4, "datas/cir.star", "circinus"),
+    new Constellation(9, "datas/cma.star", "canis major"),
+    new Constellation(3, "datas/cmi.star", "canis minor"),
+    new Constellation(5, "datas/cnc.star", "cancer"),
+    new Constellation(6, "datas/col.star", "columba"),
+    new Constellation(3, "datas/com.star", "coma berenices"),
+    new Constellation(10, "datas/cra.star", "corona australis"),
+    new Constellation(7, "datas/crb.star", "corona borealis"),
+    new Constellation(8, "datas/crt.star", "crater"),
+    new Constellation(4, "datas/cru.star", "crux"),
+    new Constellation(5, "datas/crv.star", "corvus"),
+    new Constellation(2, "datas/cvn.star", "canes venatici"),
+    new Constellation(10, "datas/cyg.star", "cygnus"),
+    new Constellation(5, "datas/delDatas.star", "delphinus"),
+    new Constellation(6, "datas/dor.star", "dorado"),
+    new Constellation(14, "datas/dra.star", "draconis"),
+    new Constellation(4, "datas/equ.star", "equuleus"),
+    new Constellation(30, "datas/eri.star", "eridanus"),
+    new Constellation(4, "datas/for.star", "fornax"),
+    new Constellation(17, "datas/gemDatas.star", "gemini"),
+    new Constellation(8, "datas/gru.star", "grus"),
+    new Constellation(21, "datas/her.star", "hercules"),
+    new Constellation(6, "datas/hor.star", "horologium"),
+    new Constellation(17, "datas/hya.star", "hydra"),
+    new Constellation(5, "datas/hyi.star", "hydrus"),
+    new Constellation(5, "datas/ind.star", "indus"),
+    new Constellation(7, "datas/lac.star", "lacerta"),
+    new Constellation(9, "datas/leo.star", "leo"),
+    new Constellation(11, "datas/lep.star", "lepus"),
+    new Constellation(6, "datas/lib.star", "libra"),
+    new Constellation(5, "datas/lmi.star", "leo minor"),
+    new Constellation(11, "datas/lup.star", "lupus"),
+    new Constellation(8, "datas/lyn.star", "lynx"),
+    new Constellation(6, "datas/lyr.star", "lyre"),
+    new Constellation(4, "datas/men.star", "mensa"),
+    new Constellation(5, "datas/mic.star", "microscopium"),
+    new Constellation(9, "datas/mon.star", "monoceros"),
+    new Constellation(6, "datas/mus.star", "musca"),
+    new Constellation(12, "datas/oriDatas.star", "orion"),
+    new Constellation(7, "datas/umaDatas.star", "ursa major"),
+    new Constellation(7, "datas/umiDatas.star", "ursa minor")
+    };
+
+Engine::Engine()
+{}
 
 void Engine::init(const char* title, int x, int y, int width, int height, Uint32 flags){
     if(SDL_Init(SDL_INIT_EVERYTHING) == 0){
@@ -71,68 +114,8 @@ void Engine::init(const char* title, int x, int y, int width, int height, Uint32
         std::cout << "SDL could not init ! " << TTF_GetError() << std::endl; 
     }
 
-    andr = new Constellation(5, "datas/andDatas.star", "andromeda");
-    ant = new Constellation(4, "datas/antDatas.star", "antlia");
-    apus = new Constellation(4, "datas/apsDatas.star", "apus");
-    aql = new Constellation(11, "datas/aqlDatas.star", "aquilae");
-    aqr = new Constellation(8, "datas/aqrDatas.star", "aquarius");
-    ara = new Constellation(8, "datas/araDatas.star", "ara");
-    ari = new Constellation(4, "datas/ariDatas.star", "aries");
-    aur = new Constellation(7, "datas/aurDatas.star", "auriga");
-    boo = new Constellation(8, "datas/booDatas.star", "bootes");
-    cae = new Constellation(4, "datas/caeDatas.star", "caelum");
-    cam = new Constellation(5, "datas/camDatas.star", "camelopardalis");
-    cap = new Constellation(9, "datas/capDatas.star", "capricornus");
-    car = new Constellation(8, "datas/carDatas.star", "carina");
-    cas = new Constellation(5, "datas/casDatas.star", "cassiopea");
-    cen = new Constellation(16, "datas/cen.star", "centauri");
-    cep = new Constellation(10, "datas/cep.star", "cepheus");
-    cet = new Constellation(12, "datas/cet.star", "cetus");
-    cha = new Constellation(5, "datas/cha.star", "chamaeleon");
-    cir = new Constellation(4, "datas/cir.star", "circinus");
-    cma = new Constellation(9, "datas/cma.star", "canis major");
-    cmi = new Constellation(3, "datas/cmi.star", "canis minor");
-    cnc = new Constellation(5, "datas/cnc.star", "cancer");
-    col = new Constellation(6, "datas/col.star", "columba");
-    com = new Constellation(3, "datas/com.star", "coma berenices");
-    cra = new Constellation(10, "datas/cra.star", "corona australis");
-    crb = new Constellation(7, "datas/crb.star", "corona borealis");
-    crt = new Constellation(8, "datas/crt.star", "crater");
-    cru = new Constellation(4, "datas/cru.star", "crux");
-    crv = new Constellation(5, "datas/crv.star", "corvus");
-    cvn = new Constellation(2, "datas/cvn.star", "canes venatici");
-    cyg = new Constellation(10, "datas/cyg.star", "cygnus");
-    delp = new Constellation(5, "datas/delDatas.star", "delphinus");
-    dor = new Constellation(6, "datas/dor.star", "dorado");
-    dra = new Constellation(14, "datas/dra.star", "draconis");
-    equ = new Constellation(4, "datas/equ.star", "equuleus");
-    eri = new Constellation(30, "datas/eri.star", "eridanus");
-    forn = new Constellation(4, "datas/for.star", "fornax");
-    gem = new Constellation(17, "datas/gemDatas.star", "gemini");
-    gru = new Constellation(8, "datas/gru.star", "grus");
-    her = new Constellation(21, "datas/her.star", "hercules");
-    hor = new Constellation(6, "datas/hor.star", "horologium");
-    hya = new Constellation(17, "datas/hya.star", "hydra");
-    hyi = new Constellation(5, "datas/hyi.star", "hydrus");
-    ind = new Constellation(5, "datas/ind.star", "indus");
-    lac = new Constellation(7, "datas/lac.star", "lacerta");
-    leo = new Constellation(9, "datas/leo.star", "leo");
-    lep = new Constellation(11, "datas/lep.star", "lepus");
-    lib = new Constellation(6, "datas/lib.star", "libra");
-    lmi = new Constellation(5, "datas/lmi.star", "leo minor");
-    lup = new Constellation(11, "datas/lup.star", "lupus");
-    lyn = new Constellation(8, "datas/lyn.star", "lynx");
-    lyr = new Constellation(6, "datas/lyr.star", "lyre");
-    men = new Constellation(4, "datas/men.star", "mensa");
-    mic = new Constellation(5, "datas/mic.star", "microscopium");
-    mon = new Constellation(9, "datas/mon.star", "monoceros");
-    mus = new Constellation(6, "datas/mus.star", "musca");
-    ori = new Constellation(12, "datas/oriDatas.star", "orion");
-    uma = new Constellation(7, "datas/umaDatas.star", "ursa major");
-    umi = new Constellation(7, "datas/umiDatas.star", "ursa minor");
-
     //Load font
-    mainFont = TTF_OpenFont("res/angelina.ttf", 24);
+    mainFont = TTF_OpenFont("res/Roboto-Regular.ttf", 20);
     if(mainFont == NULL){
         std::cout << "Failed to load font" << TTF_GetError() << std::endl;
     }else{
@@ -147,6 +130,10 @@ void Engine::clean(){
 
     stellariaText.free();
 
+    for(int i = 0; i < numberOfConstellation; i++){
+        arrayConstellation[i]->free();
+    }
+
     TTF_CloseFont(mainFont);
     mainFont = NULL;
 
@@ -156,87 +143,82 @@ void Engine::clean(){
     TTF_Quit();
     SDL_Quit();
 }
+
 void Engine::handleEvents(){
     SDL_Event event;
     SDL_PollEvent(&event);
 
     if(event.type == SDL_QUIT){
         running = false;
-    }else if(event.type == SDL_KEYUP){
+    }else if(event.type == SDL_KEYDOWN){
         switch(event.key.keysym.sym){
             case SDLK_SPACE:
                 if(!reader){
-                    reader = true;}
+                    reader = true;
+                    }
                 else reader = false;
                 break;
             case SDLK_ESCAPE:
+            for(int i = 0; i < numberOfConstellation; i++){
+                arrayConstellation[i]->deselect();
+            }
                 system("cls");
-                break;     
+                readingLine = 0;
+                break;
+            case SDLK_a:
+                for(int i = 0; i < numberOfConstellation; i++){
+                    arrayConstellation[i]->selectAll();
+                }
+                break;
+            case SDLK_q:
+                running = false;
+                break;
+            case SDLK_g:
+                if(grided == false)
+                    grided = true;
+                else 
+                    grided = false;
+                break;
+
+            case SDLK_p:
+                readingLine += 1;
+                break;
+
+            // constellation Manual Movement
+            case SDLK_UP:
+                for(int i = 0; i < numberOfConstellation; i++){
+                    arrayConstellation[i]->moveConstellation(0,-5);
+                }
+                break;
+            case SDLK_DOWN:
+                for(int i = 0; i < numberOfConstellation; i++){
+                    arrayConstellation[i]->moveConstellation(0,5);
+                }
+                break;
+            case SDLK_LEFT:
+                for(int i = 0; i < numberOfConstellation; i++){
+                    arrayConstellation[i]->moveConstellation(-5,0);
+                }
+                break;
+            case SDLK_RIGHT:
+                for(int i = 0; i < numberOfConstellation; i++){
+                    arrayConstellation[i]->moveConstellation(5,0);
+                }
+                break;
         }
     }
     else if(event.type == SDL_MOUSEMOTION){
         SDL_GetMouseState(&xMouse, &yMouse);
     }else if(event.type == SDL_MOUSEBUTTONUP){
-            andr->inside();
-            apus->inside();
-            ant->inside();
-            aql->inside();
-            aqr->inside();
-            ara->inside();
-            ari->inside();
-            aur->inside();
-            boo->inside();
-            cae->inside();
-            cam->inside();
-            cap->inside();
-            car->inside();
-            cas->inside();
-            cen->inside();
-            cep->inside();
-            cet->inside();
-            cha->inside();
-            cir->inside();
-            cma->inside();
-            cmi->inside();
-            cnc->inside();
-            col->inside();
-            com->inside();
-            cra->inside();
-            crb->inside();
-            crt->inside();
-            cru->inside();
-            crv->inside();
-            cvn->inside();
-            cyg->inside();
-            delp->inside();
-            dor->inside();
-            dra->inside();
-            equ->inside();
-            eri->inside();
-            forn->inside();
-            gem->inside();
-            gru->inside();
-            her->inside();
-            hor->inside();
-            hya->inside();
-            hyi->inside();
-            ind->inside();
-            lac->inside();
-            leo->inside();
-            lep->inside();
-            lib->inside();
-            lmi->inside();
-            lup->inside();
-            lyn->inside();
-            lyr->inside();
-            men->inside();
-            mic->inside();
-            mon->inside();
-            mus->inside();
-            ori->inside();
-            uma->inside();
-            umi->inside();       
-    }else if(event.type == SDL_WINDOWEVENT){
+        for(int i = 0; i < numberOfConstellation; i++){
+            arrayConstellation[i]->inside();
+        }
+    }
+    else if(event.type == SDL_MOUSEBUTTONDOWN){
+        readingLine = xMouse;
+    }
+    
+    else if(event.type == SDL_WINDOWEVENT){
         switch(event.window.event){
             case SDL_WINDOWEVENT_RESIZED:
                 mWidth = event.window.data1;
@@ -254,7 +236,6 @@ void Engine::update(){
     dateNow = std::to_string(now->tm_mday) + "/" +std::to_string(now->tm_mon + 1) + "/" +std::to_string(now->tm_year + 1900);
     timeNow = std::to_string(now->tm_hour) + ":"+std::to_string(now->tm_min) + ":"+ std::to_string(now->tm_sec);
     sideralTimeText = std::to_string(sideralTime(now->tm_mday, now->tm_mon + 1, now->tm_year + 1900, now->tm_hour, now->tm_min, now->tm_sec,4) );
-
 }
 
 void Engine::render(){
@@ -262,65 +243,9 @@ void Engine::render(){
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    andr->render();
-    apus->render();
-    ant->render();
-    aql->render();
-    aqr->render();
-    ara->render();
-    ari->render();
-    aur->render();
-    boo->render();
-    cae->render();
-    cam->render();
-    cap->render();
-    car->render();
-    cas->render();
-    cen->render();
-    cep->render();
-    cet->render();
-    cha->render();
-    cir->render();
-    cma->render();
-    cmi->render();
-    cnc->render();
-    col->render();
-    com->render();
-    cra->render();
-    crb->render();
-    crt->render();
-    cru->render();
-    crv->render();
-    cvn->render();
-    cyg->render();
-    delp->render();
-    dor->render();
-    dra->render();
-    equ->render();
-    eri->render();
-    forn->render();
-    gem->render();
-    gru->render();
-    her->render();
-    hor->render();
-    hya->render();
-    hyi->render();
-    ind->render();
-    lac->render();
-    leo->render();
-    lep->render();
-    lib->render();
-    lmi->render();
-    lup->render();
-    lyn->render();
-    lyr->render();
-    men->render();
-    mic->render();
-    mon->render();
-    mus->render();
-    ori->render();
-    uma->render();
-    umi->render();
+    for(int i = 0; i < numberOfConstellation ; i++){
+        arrayConstellation[i]->render();
+    }
 
     mousePosition.renderText( std::to_string(Engine::xMouse) + " " + std::to_string(Engine::yMouse), {255, 255, 255});
     mousePosition.render(1100,5);
@@ -342,6 +267,9 @@ void Engine::render(){
 
     stellariaText.render(20,20);
 
+    grid();
+    line();
+
     SDL_RenderPresent(renderer);
 }
 
@@ -354,4 +282,28 @@ int Engine::getWidth(){
 }
 int Engine::getHeight(){
     return mHeight;
+}
+
+void Engine::grid(){
+    if(grided){
+        SDL_SetRenderDrawColor(Engine::renderer, 0, 122, 255, 1);
+        for(int i = 0; i < 180; i++){
+            SDL_RenderDrawLine(Engine::renderer, (int)(i * 6.6),0,(int)(i * 6.6),mHeight );
+        }
+    }
+    else{
+        SDL_SetRenderDrawColor(Engine::renderer, 0,0,0,255);
+    }
+}
+
+void Engine::line(){
+
+    if(reader){
+        SDL_SetRenderDrawColor(Engine::renderer, 255, 255, 0, 255);
+        SDL_RenderDrawLine(Engine::renderer, readingLine, 0, readingLine, mHeight);
+        readingLine += 1;
+    }
+    if(readingLine > mWidth){
+        readingLine = 0;
+    }
 }

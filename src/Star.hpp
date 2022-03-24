@@ -34,7 +34,7 @@ class Star{
         int m_x;
         int m_y;
         int m_size;
-
+        SDL_Rect starRect;
         bool drawing;
         Uint8 m_red = 255, m_green = 255, m_blue = 255; 
 };

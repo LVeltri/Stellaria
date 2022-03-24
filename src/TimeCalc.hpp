@@ -109,13 +109,19 @@ float sideralTime(int day, int month, int year, int hour, int minutes, int secon
     float newHour;
 
     newHour = convertTime(hour, minutes, seconds);
+    // std::cout << "New Hour: " << newHour << std::endl;
 
     D1 = dateval(day, month, year);
     D = D1 - 36526;
+    // std::cout << "Dateval: " << D << std::endl;
 
-    TSL0 = HSG + JS * (D + newHour / 24.0);
-    TSL0 += (longitude/15.0);
+    TSL0 = HSG + JS * ((float)D + newHour / 24.0);
+    TSL0 += ((float)longitude/15.0);
+    // std::cout << "TSL0: " << TSL0 << std::endl;
     time = fmod(TSL0, 24.0);
+    // std::cout << "time: " << time << std::endl;
+
+    // system("cls");
 
     return time;
 }
