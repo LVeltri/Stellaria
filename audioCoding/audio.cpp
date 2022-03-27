@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <fstream>
+#include <portaudio/portaudio.h>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ class Sine{
             angle += offset;
             return sample;
         }
-        void write(int duration){
+        void write(float duration){
 
             auto maxAmplitude = pow(2, bitDepth -1) -1;
             for(int i = 0; i < sample_rate * duration; i++){
@@ -40,23 +41,39 @@ class Sine{
             offset = 2 * MPI * newFreq / sample_rate;
         }
 
-        int arrDuration[3] = {1,3,2};
-        float arrFreq[3] = {261.93, 392.0, 369.99};
 
-        void read(){
+
+        void read(float *frequency, float *duration, int size){
             audioFile.open("waveform.wav", ios::binary);
-            for(int i = 0; i < 3; i++){
-               changeFreq(arrFreq[i]);
-               write(arrDuration[i]);
+            for(int i = 0; i < size; i++){
+               changeFreq(frequency[i]);
+               write(duration[i]);
            }
            audioFile.close(); 
         }
 };
 
+typedef int PaCallback(const void *input,
+                             void *output,
+                             unsigned long frameCount,
+                             const PaStreamCallbackTimeInfo* timeInfo,
+                             PaStreamCallbackFlags statusFlags,
+                             void *userData);
+
 int main(){
 
-    Sine sine(440,0.2);
-    sine.read();
+    PaError err;
 
+    err = Pa_Initialize();
+
+
+    float arrDuration[8] = {0.5,0.25,0.25,0.5,0.25,0.255,0.5,0.25};
+    float arrFreq[8] = {261.93, 392.00, 329.63, 392.00, 261.93, 392.00, 329.63, 392.00};
+
+    Sine sine(440,0.2);
+    sine.read(arrFreq,arrDuration,8);
+
+
+    Pa_Terminate();
     return 0;
 }
