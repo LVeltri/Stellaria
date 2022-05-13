@@ -1,9 +1,13 @@
-#pragma once
+#ifndef ENGINE_HPP
+#define ENGINE_HPP
+
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_thread.h>
 #include <string>
 #include <ctime>
+
 
 class Engine{
     public:
@@ -33,15 +37,19 @@ class Engine{
     static int mTempWidth;
     static int mTempHeight;
 
+    static float mSideralTime;
+
     std::string dateNow;
     std::string timeNow;
     std::string sideralTimeText;
 
     static bool reader;
 
+    void convertMousePosition();
+
     //Get dimension of the window
     static int getWidth();
-    int getHeight();
+    static int getHeight();
 
     private:
         int readingLine = 0;
@@ -51,3 +59,5 @@ class Engine{
         // 10 seconde de bufferSize
         int bufferSize = 10;
 };
+
+#endif

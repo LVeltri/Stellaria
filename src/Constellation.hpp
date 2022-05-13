@@ -5,8 +5,9 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <fstream>
-#include <vector>
 #include <ctime>
+#include <thread>
+#include <chrono>
 
 #include "Star.hpp"
 #include "Engine.hpp"
@@ -37,6 +38,13 @@ class Constellation{
         //Move constellation
         void moveConstellation(int x, int y);
         void changeColor(Uint8 red, Uint8 green, Uint8 blue);
+        //Convert angleHoraire en ascencion droite
+        void convertAhToAD();
+        // 
+        void getAhCoordinate();
+        void Size(int size);
+
+        std::string getName();
 
     private:
         int m_nbStar;
@@ -46,11 +54,13 @@ class Constellation{
         bool selected = false;
         // Boolean used to redefine limits
         bool moved = false;
+        bool reading;
         //border
         int m_xMin = 1200, m_xMax = 0, m_yMin = 600, m_yMax = 0;
         int minXDetected, minYDetected, maxXDetected, maxYDetected;
         int margin = 5;
         int xMouse, yMouse;
         int *buffer;
+        int angleAH;
 };
 #endif

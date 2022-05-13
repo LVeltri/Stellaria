@@ -16,9 +16,8 @@ class Star{
         int getY();
         void printCoordinates();
 
-
-        
         void setCoordinates(int x, int y);
+        void setSize(int size);
 
         void draw();
 
@@ -34,7 +33,7 @@ class Star{
         int m_x;
         int m_y;
         int m_size;
-        SDL_Rect starRect;
+        SDL_Rect *starRect = NULL;
         bool drawing;
         Uint8 m_red = 255, m_green = 255, m_blue = 255; 
 };

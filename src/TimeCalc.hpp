@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <cmath>
+#include <iomanip>
+#include <string>
 
 // Variable Declaration
 
@@ -11,6 +13,8 @@ float HSG = 18.697374558;
 // Jour solaire
 float JS = 24.065709824419;
 float TSL0 = 0.0;
+
+std::string heureSiderale;
 
 // Functions
 
@@ -102,26 +106,28 @@ float convertTime(int hour, int minutes, int seconds){
     return time;
 }
 
-// Give the local sideral time
-float sideralTime(int day, int month, int year, int hour, int minutes, int seconds, int longitude){
-    float time;
-    int D, D1;
-    float newHour;
+// converting floating hour to hh::mm::ss
+std::string convertTime2(float decimalHour){
+    int hours, minutes, seconds;
+    hours = decimalHour;
+    minutes = (decimalHour - hours) * 60;
+    seconds = (((decimalHour - hours) * 60) - minutes) * 60 ;
 
-    newHour = convertTime(hour, minutes, seconds);
+    return heureSiderale = std::to_string(hours) + ":"+std::to_string(minutes) + ":"+std::to_string(seconds);
+}
+
+// Give the local sideral time
+double sideralTime(int day, int month, int year, int hour, int minutes, int seconds, int longitude){
+    double time;
+    int D, D1;
+    double newHour;
+
+    newHour = convertTime(hour - 2, minutes, seconds);
     // std::cout << "New Hour: " << newHour << std::endl;
 
-    D1 = dateval(day, month, year);
-    D = D1 - 36526;
-    // std::cout << "Dateval: " << D << std::endl;
-
-    TSL0 = HSG + JS * ((float)D + newHour / 24.0);
-    TSL0 += ((float)longitude/15.0);
-    // std::cout << "TSL0: " << TSL0 << std::endl;
-    time = fmod(TSL0, 24.0);
-    // std::cout << "time: " << time << std::endl;
-
-    // system("cls");
+    // D1 = dateval(day, month, year);
+    D = dateval(day, month, year) - 36526;
+    time = fmod( HSG + (JS  * ( (double)D + (newHour / 24.0) - 0.5 )) + ((double)longitude/15.0), 24.0);
 
     return time;
 }

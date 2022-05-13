@@ -3,6 +3,7 @@
 #include "Constellation.hpp"
 #include "Texture.hpp"
 #include "TimeCalc.hpp"
+#include <iomanip>
 
 //Declare reachable Variable of Engine;
 SDL_Renderer* Engine::renderer = nullptr;
@@ -14,6 +15,7 @@ int Engine::mWidth = 1200;
 int Engine::mHeight = 600;
 int Engine::mTempWidth;
 int Engine::mTempHeight;
+float Engine::mSideralTime;
 SDL_Event Engine::e;
 
 //Declare Texture
@@ -23,8 +25,9 @@ Texture timeTexture;
 Texture mousePosition;
 Texture playTexture;
 Texture sideralTimeTexture;
+Texture constellationName;
 
-const int numberOfConstellation = 59;
+const int numberOfConstellation = 88;
 
 Constellation *arrayConstellation[numberOfConstellation] = {
     new Constellation(5, "datas/andDatas.star", "andromeda"),
@@ -83,9 +86,38 @@ Constellation *arrayConstellation[numberOfConstellation] = {
     new Constellation(5, "datas/mic.star", "microscopium"),
     new Constellation(9, "datas/mon.star", "monoceros"),
     new Constellation(6, "datas/mus.star", "musca"),
+    new Constellation(4, "datas/nor.star", "norma"),
+    new Constellation(4, "datas/oct.star", "octans"),
+    new Constellation(12, "datas/oph.star", "ophiucius"),
     new Constellation(12, "datas/oriDatas.star", "orion"),
+    new Constellation(7,"datas/pav.star", "pavo"),
+    new Constellation(13, "datas/peg.star", "pegasus"),
+    new Constellation(19, "datas/per.star", "perseus"),
+    new Constellation(7, "datas/phe.star", "phoenix"),
+    new Constellation(3, "datas/pic.star", "pictor"),
+    new Constellation(7, "datas/psa.star", "pisces austrinus"),
+    new Constellation(21, "datas/psc.star", "pisces"),
+    new Constellation(9, "datas/pup.star", "puppis"),
+    new Constellation(6, "datas/pyx.star", "pyx"),
+    new Constellation(7, "datas/ret.star", "reticulum"),
+    new Constellation(6, "datas/scl.star", "sculptor"),
+    new Constellation(15, "datas/sco.star", "scorpius"),
+    new Constellation(6, "datas/sct.star", "scutum"),
+    new Constellation(12, "datas/ser.star", "serpens"),
+    new Constellation(4, "datas/sex.star", "sextans"),
+    new Constellation(5, "datas/sge.star", "sagitta"),
+    new Constellation(13, "datas/sgr.star", "sagittarius"),
+    new Constellation(14, "datas/tau.star", "taurus"),
+    new Constellation(5, "datas/tel.star", "telescopium"),
+    new Constellation(3, "datas/tra.star", "triangulum australe"),
+    new Constellation(3, "datas/tri.star", "triangulum"),
+    new Constellation(6, "datas/tuc.star", "tucana"),
     new Constellation(7, "datas/umaDatas.star", "ursa major"),
-    new Constellation(7, "datas/umiDatas.star", "ursa minor")
+    new Constellation(7, "datas/umiDatas.star", "ursa minor"),
+    new Constellation(8, "datas/vel.star", "vela"),
+    new Constellation(9, "datas/vir.star", "virgo"),
+    new Constellation(6, "datas/vol.star", "volans"),
+    new Constellation(6, "datas/vul.star", "vulpecula")
     };
 
 Engine::Engine()
@@ -158,6 +190,7 @@ void Engine::handleEvents(){
                     }
                 else reader = false;
                 break;
+                
             case SDLK_ESCAPE:
             for(int i = 0; i < numberOfConstellation; i++){
                 arrayConstellation[i]->deselect();
@@ -183,28 +216,6 @@ void Engine::handleEvents(){
             case SDLK_p:
                 readingLine += 1;
                 break;
-
-            // constellation Manual Movement
-            case SDLK_UP:
-                for(int i = 0; i < numberOfConstellation; i++){
-                    arrayConstellation[i]->moveConstellation(0,-5);
-                }
-                break;
-            case SDLK_DOWN:
-                for(int i = 0; i < numberOfConstellation; i++){
-                    arrayConstellation[i]->moveConstellation(0,5);
-                }
-                break;
-            case SDLK_LEFT:
-                for(int i = 0; i < numberOfConstellation; i++){
-                    arrayConstellation[i]->moveConstellation(-5,0);
-                }
-                break;
-            case SDLK_RIGHT:
-                for(int i = 0; i < numberOfConstellation; i++){
-                    arrayConstellation[i]->moveConstellation(5,0);
-                }
-                break;
         }
     }
     else if(event.type == SDL_MOUSEMOTION){
@@ -221,10 +232,17 @@ void Engine::handleEvents(){
     else if(event.type == SDL_WINDOWEVENT){
         switch(event.window.event){
             case SDL_WINDOWEVENT_RESIZED:
+                mTempWidth = mWidth;
+                mTempHeight = mHeight;
                 mWidth = event.window.data1;
                 mHeight = event.window.data2;
                 std::cout << "Window resized" << std::endl;
+                std::cout << "Old Dimension:" << mTempWidth << "x" << mTempHeight << std::endl;
                 std::cout << "Dimension:" << mWidth << "x" << mHeight << std::endl;
+
+                for(int i = 0; i < numberOfConstellation; i++){
+                    arrayConstellation[i]->changePosition();
+                }
                 break;
         }
     }
@@ -235,7 +253,9 @@ void Engine::update(){
     tm *now = localtime(&t);
     dateNow = std::to_string(now->tm_mday) + "/" +std::to_string(now->tm_mon + 1) + "/" +std::to_string(now->tm_year + 1900);
     timeNow = std::to_string(now->tm_hour) + ":"+std::to_string(now->tm_min) + ":"+ std::to_string(now->tm_sec);
-    sideralTimeText = std::to_string(sideralTime(now->tm_mday, now->tm_mon + 1, now->tm_year + 1900, now->tm_hour, now->tm_min, now->tm_sec,4) );
+    mSideralTime =  sideralTime(now->tm_mday, now->tm_mon + 1, now->tm_year + 1900, now->tm_hour, now->tm_min, now->tm_sec,4);
+    sideralTimeText = "Temps sideral: " + convertTime2(mSideralTime);
+
 }
 
 void Engine::render(){
@@ -247,8 +267,9 @@ void Engine::render(){
         arrayConstellation[i]->render();
     }
 
-    mousePosition.renderText( std::to_string(Engine::xMouse) + " " + std::to_string(Engine::yMouse), {255, 255, 255});
-    mousePosition.render(1100,5);
+    convertMousePosition();
+   
+    mousePosition.render(mWidth - 60 ,5);
 
     dateTexture.renderText(dateNow, {0, 100, 255} );
     dateTexture.render(20,40);
@@ -267,9 +288,8 @@ void Engine::render(){
 
     stellariaText.render(20,20);
 
-    grid();
-    line();
-
+    // grid();
+    
     SDL_RenderPresent(renderer);
 }
 
@@ -286,9 +306,12 @@ int Engine::getHeight(){
 
 void Engine::grid(){
     if(grided){
-        SDL_SetRenderDrawColor(Engine::renderer, 0, 122, 255, 1);
+        SDL_SetRenderDrawColor(Engine::renderer, 0, 122, 255, 0);
+        for(int i = 0; i < 24; i++){
+            SDL_RenderDrawLine(Engine::renderer, (int)((i * mWidth)/24), 0, (int)((i * mWidth)/24), mHeight );
+        }
         for(int i = 0; i < 180; i++){
-            SDL_RenderDrawLine(Engine::renderer, (int)(i * 6.6),0,(int)(i * 6.6),mHeight );
+            SDL_RenderDrawLine(renderer, 0, (int)((i * mHeight) / 180), mWidth, (int)((i * mHeight) / 180)) ;
         }
     }
     else{
@@ -306,4 +329,14 @@ void Engine::line(){
     if(readingLine > mWidth){
         readingLine = 0;
     }
+}
+
+void Engine::convertMousePosition(){
+    
+    // X position ==> Hour (24->0)
+    int hourPos = -(24.0 /  (double)mWidth) * (double)xMouse + 24;
+    // Y position ==> Angle (90->-90)
+    int anglePos = -(180.0 / (double)mHeight) * (double)yMouse + 90.0;
+    // Set mouse position texture
+    mousePosition.renderText( std::to_string(hourPos) + " " + std::to_string(anglePos), {255, 255, 255});
 }

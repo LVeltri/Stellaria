@@ -1,6 +1,8 @@
 #include "Constellation.hpp"
 #include "Engine.hpp"
 
+#include <cmath>
+
 //Init Constellation
 Constellation::Constellation()
 {}
@@ -30,7 +32,7 @@ void Constellation::load(std::string filename){
         consFile >> y;
         int newY = y;
 
-        setStar(star, newX, newY);
+        setStar(star, x, y);
     }
 }
 //Deallocate the star array
@@ -45,13 +47,17 @@ void Constellation::render(){
     for(int i = 0; i < m_nbStar; i++){
         m_star[i].draw();
     }
+
 }
-// Set each star's position
+
+// Change Constellation position after resizing
 void Constellation::setStar(int index, int x, int y){
     x = (x * Engine::mWidth) / 360;
     y =  (y * (-1) + 90) * Engine::mHeight / 180;
     m_star[index].setCoordinates(x, y);
+    m_star[index].setSize(1);
 }
+
 //Update the constellation position
 void Constellation::update(){
 }
@@ -102,11 +108,13 @@ void Constellation::border(){
     checkLimit();
     // White color
     if(!Engine::reader){
-       SDL_SetRenderDrawColor(Engine::renderer, 255,255,255,255); 
+       SDL_SetRenderDrawColor(Engine::renderer, 255,255,255,255);
+        
     }
     //Change to red color if play activated
     else{
-       SDL_SetRenderDrawColor(Engine::renderer, 255,0,0,255); 
+       SDL_SetRenderDrawColor(Engine::renderer, 255,0,0,255);
+       read();
     }
     
     //If constellation selected draw border with a little margin
@@ -122,19 +130,27 @@ void Constellation::border(){
     }
 }
 // Check if mouse inside
-/* Warning !! Some Constellation are in Constellation Border!!
+/* Warning !! Some Constellations are inside another Constellation Border!!
 Add Function to prevent multiple selection*/
 bool Constellation::inside(){
     //If mouse is clicked inside and selected = false turn selected --> true;
     if(Engine::xMouse > m_xMin && Engine::xMouse  < m_xMax && Engine::yMouse > m_yMin && Engine::yMouse < m_yMax && selected == false){
         selected = true;
         std::cout << "Constellation: " << m_name << std::endl;
-        changeColor(0,255,150);
+        changeColor(0,255,0);
+        for(int i = 0; i < m_nbStar; i++){
+            m_star[i].setSize(2);
+        }
+        std::cout << "Limit: " << m_xMin << " - " << m_xMax << std::endl;
+        read();
     }
     //If mouse is clicked inside and selected = true turn selected --> false;
     else if(Engine::xMouse > m_xMin && Engine::xMouse  < m_xMax && Engine::yMouse > m_yMin && Engine::yMouse < m_yMax && selected == true){
         selected = false;
         changeColor(255,255,255);
+        for(int i = 0; i < m_nbStar; i++){
+            m_star[i].setSize(1);
+        }
     }
 }
 //Check star position for read method
@@ -150,44 +166,25 @@ bool Constellation::checkStar(int pos){
     }
     return check;
 }
-//Read position
+//Read buffer
 void Constellation::read(){
     //Create a buffer within the limit of the constellation
+    int bufPos;
     int bufferSize = m_xMax - m_xMin;
+    bufPos = m_xMin;
     std::cout << "Buffer size: " << bufferSize << std::endl;
-    int  *buffer = new int[bufferSize];
-    // Read buffer
-    for(int i = 0; i < bufferSize; i++){
-        buffer[i] = 0;
-        std::cout << buffer[i] << " ";
-        
-    }
-    std::cout << std::endl;
-
-    int index = 0;
-
-    //loop buffer read
-    for(int pos = m_xMin; pos <= m_xMax; pos++){
-        // std::cout <<checkStar(pos);
-        if(checkStar(pos)){
-            for(int i = 0; i < m_nbStar; i++){
-                if(pos == m_star[i].getX()){
-                    buffer[index] = m_star->getY();
-                    std::cout << "Here a star, X pos: " << m_star[i].getX();
-                }else{
-                    buffer[index] = 0;
-                }
-            }
+    std::cout << "Pos: " << bufPos << std::endl;
+    
+    while(Engine::reader == true){
+        // std::cout << "Reading" << std::endl;
+        bufPos += 1;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        // std::cout << bufPos << std::endl;
+        // system("cls");
+        if(bufPos > m_xMax){
+            bufPos = m_xMin;
         }
-        index++;
     }
-    std::cout << "Buffer Completed" << std::endl;
-
-    std::cout << "Reading buffer" << std::endl;
-    for(int i = 0; i < bufferSize; i++){
-        std::cout << buffer[i]<<" ";
-    }
-    std::cout << std::endl;
 
 }
 //Convert position to Frequency
@@ -201,7 +198,10 @@ int Constellation::posToFreq(int pos){
 // Change position if window resized
 void Constellation::changePosition(){
     for(int i = 0; i < m_nbStar; i++){
-        m_star[i].setCoordinates( (int)(m_star[i].getX()*Engine::getWidth()/360), m_star[i].getY() );
+        m_star[i].setCoordinates( 
+            (int)(m_star[i].getX() * Engine::getWidth() / Engine::mTempWidth), 
+            (int)(m_star[i].getY() * Engine::getHeight() / Engine::mTempHeight) 
+        );
     }
 }
 
@@ -226,16 +226,41 @@ void Constellation::changeColor(Uint8 red, Uint8 green, Uint8 blue){
     }
 }
 
+// AH coordinate : H = T - a
+void Constellation::getAhCoordinate(){
+        // *Make a for loop to get for each star every X pos and change each X to AH coordinates*//
+    for(int i =  0; i < m_nbStar; i++){
+        m_star[i].setCoordinates(Engine::mSideralTime - m_star[i].getX(), m_star[i].getY() );
+    }
+}
+
+void Constellation::Size(int size){
+    for(int i = 0; i < m_nbStar; i++){
+        m_star[i].setSize(size);
+    }
+}
+
+std::string Constellation::getName(){
+    return m_name;
+}
+
 /*=============Function for constellation Array=============*/
 
 // Select all Constellations
 void Constellation::selectAll(){
     selected = true;
     changeColor(0,255,150);
+    std::cout << "Constellation: " << m_name << std::endl;
+        for(int i = 0; i < m_nbStar; i++){
+            m_star[i].setSize(2);
+        }
 }
 
 // Deselect all Constellations
 void Constellation::deselect(){
     selected = false;
     changeColor(255,255,255);
+        for(int i = 0; i < m_nbStar; i++){
+            m_star[i].setSize(1);
+        }
 }
